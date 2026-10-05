@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>西交利物浦大学 AI 使用情况调查 | XJTLU AI Usage Survey</title>
+<meta name="description" content="谁在用 AI？什么情境下用？出于什么目的？——西交利物浦大学学生 AI 使用情况调查 | Who uses AI, in what situations, and why? A survey among XJTLU students">
+<style>
+  :root {
+    --xjtlu-blue: #003A70;
+    --xjtlu-blue-light: #2E6DA4;
+    --accent: #E31837;
+    --bg: #F4F7FB;
+    --card: #FFFFFF;
+    --text: #22303F;
+    --text-muted: #6B7A8C;
+    --border: #DDE6F0;
+    --radius: 14px;
+    --shadow: 0 4px 20px rgba(0, 58, 112, 0.08);
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.7;
+    padding-bottom: 60px;
+  }
+
+  /* ===== 顶部横幅 ===== */
+  .hero {
+    background: linear-gradient(135deg, var(--xjtlu-blue) 0%, #0A5BA8 100%);
+    color: #fff;
+    padding: 56px 20px 72px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::after {
+    content: "";
+    position: absolute; bottom: -40px; left: 50%; transform: translateX(-50%);
+    width: 140%; height: 80px; background: var(--bg);
+    border-radius: 50% 50% 0 0;
+  }
+  .hero .badge {
+    display: inline-block;
+    background: rgba(255,255,255,0.15);
+    border: 1px solid rgba(255,255,255,0.35);
+    border-radius: 999px;
+    padding: 4px 16px;
+    font-size: 13px;
+    letter-spacing: 1px;
+    margin-bottom: 18px;
+  }
+  .hero h1 { font-size: clamp(22px, 4vw, 34px); font-weight: 700; margin-bottom: 12px; }
+  .hero p.sub { opacity: 0.92; font-size: clamp(14px, 2.5vw, 17px); max-width: 720px; margin: 0 auto; }
+  .hero .meta {
+    margin-top: 22px; font-size: 13px; opacity: 0.85;
+    display: flex; gap: 18px; justify-content: center; flex-wrap: wrap;
+  }
+  .hero .meta span { display: inline-flex; align-items: center; gap: 6px; }
+
+  /* ===== 语言切换 ===== */
+  .lang-switch {
+    position: absolute; top: 16px; right: 16px;
+    display: flex; background: rgba(255,255,255,0.12);
+    border: 1px solid rgba(255,255,255,0.35);
+    border-radius: 999px; overflow: hidden;
+  }
+  .lang-switch button {
+    background: none; border: none; color: #fff;
+    padding: 6px 16px; font-size: 13px; cursor: pointer;
+    transition: background 0.2s;
+  }
+  .lang-switch button.active { background: #fff; color: var(--xjtlu-blue); font-weight: 600; }
+
+  /* ===== 主体 ===== */
+  .container { max-width: 860px; margin: -36px auto 0; padding: 0 16px; position: relative; z-index: 2; }
+  .card {
+    background: var(--card);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border);
+    padding: 28px clamp(18px, 4vw, 36px);
+    margin-bottom: 22px;
+  }
+  .intro-card p { color: var(--text-muted); font-size: 15px; }
+  .intro-card p + p { margin-top: 8px; }
+
+  fieldset { border: none; }
+  .section-title {
+    display: flex; align-items: center; gap: 10px;
+    font-size: 18px; font-weight: 700; color: var(--xjtlu-blue);
+    padding-bottom: 12px; border-bottom: 2px solid #EDF2F8; margin-bottom: 20px;
+  }
+  .section-title .num {
+    background: var(--xjtlu-blue); color: #fff;
+    width: 26px; height: 26px; border-radius: 8px;
+    display: inline-flex; align-items: center; justify-content: center;
+    font-size: 14px; flex-shrink: 0;
+  }
+
+  .question { margin-bottom: 26px; }
+  .question:last-child { margin-bottom: 8px; }
+  .q-title { font-weight: 600; margin-bottom: 4px; font-size: 15.5px; }
+  .q-title .req { color: var(--accent); margin-left: 2px; }
+  .q-hint { font-size: 13px; color: var(--text-muted); margin-bottom: 10px; }
+
+  /* 选项 */
+  .options { display: grid; gap: 8px; }
+  .options.cols-2 { grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); }
+  .option {
+    display: flex; align-items: flex-start; gap: 10px;
+    background: #F8FAFD; border: 1.5px solid var(--border);
+    border-radius: 10px; padding: 10px 14px; cursor: pointer;
+    transition: all 0.15s; font-size: 14.5px;
+  }
+  .option:hover { border-color: var(--xjtlu-blue-light); background: #EFF5FC; }
+  .option input { margin-top: 4px; accent-color: var(--xjtlu-blue); width: 16px; height: 16px; flex-shrink: 0; }
+  .option input[type="checkbox"], .option input[type="radio"] { cursor: pointer; }
+
+  .option.text-option { display: block; cursor: default; }
+  .option.text-option:hover { background: #F8FAFD; border-color: var(--border); }
+
+  textarea, input[type="text"] {
+    width: 100%; border: 1.5px solid var(--border); border-radius: 10px;
+    padding: 10px 14px; font-size: 14.5px; font-family: inherit;
+    background: #F8FAFD; resize: vertical; transition: border 0.15s;
+  }
+  textarea:focus, input[type="text"]:focus { outline: none; border-color: var(--xjtlu-blue-light); background: #fff; }
+  textarea { min-height: 90px; }
+
+  .submit-area { text-align: center; padding: 8px 0 4px; }
+  .btn-submit {
+    background: linear-gradient(135deg, var(--xjtlu-blue), #0A5BA8);
+    color: #fff; border: none; border-radius: 999px;
+    padding: 14px 56px; font-size: 16.5px; font-weight: 600;
+    cursor: pointer; box-shadow: 0 6px 18px rgba(0,58,112,0.28);
+    transition: transform 0.15s, box-shadow 0.15s;
+  }
+  .btn-submit:hover { transform: translateY(-2px); box-shadow: 0 10px 24px rgba(0,58,112,0.35); }
+  .btn-submit:disabled { opacity: 0.55; cursor: not-allowed; transform: none; }
+
+  .thanks { display: none; text-align: center; padding: 60px 20px; }
+  .thanks .icon { font-size: 56px; margin-bottom: 16px; }
+  .thanks h2 { color: var(--xjtlu-blue); margin-bottom: 10px; }
+
+  .footer { text-align: center; color: var(--text-muted); font-size: 12.5px; margin-top: 30px; }
+  .footer a { color: var(--xjtlu-blue-light); text-decoration: none; }
+
+  /* 提示条 */
+  .alert {
+    border-radius: 10px; padding: 12px 16px; font-size: 14px; margin-bottom: 18px;
+    display: none; align-items: flex-start; gap: 8px;
+  }
+  .alert.show { display: flex; }
+  .alert-error { background: #FDEBEE; color: #9E1B32; border: 1px solid #F5C6CB; }
+
+  @media (max-width: 520px) {
+    .hero { padding: 48px 16px 64px; }
+    .card { padding: 22px 16px; }
+  }
+
+  /* 隐藏未被选中的语言 */
+  html[lang="zh-CN"] [lang="en-only"], html[lang="en"] [lang="zh-only"] { display: none !important; }
+</style>
+</head>
+<body>
+
+<!-- ================= 横幅 ================= -->
+<header class="hero">
+  <div class="lang-switch" role="group" aria-label="Language / 语言">
+    <button id="btn-zh" class="active" onclick="setLang('zh')">中文</button>
+    <button id="btn-en" onclick="setLang('en')">English</button>
+  </div>
+  <div class="badge">STUDENT SURVEY · 学生调查</div>
+  <h1><span lang="zh-only">西交利物浦大学<br>AI 使用情况调查问卷</span><span lang="en-only">XJTLU AI Usage Survey</span></h1>
+  <p class="sub">
+    <span lang="zh-only">谁在用 AI？在什么情境下用？出于什么目的？——聚焦西浦学生 AI 使用实况。问卷匿名，约 3 分钟。</span>
+    <span lang="en-only">Who uses AI? In what situations? And why? A close look at AI usage among XJTLU students. Anonymous, ~3 min.</span>
+  </p>
+  <div class="meta">
+    <span>🔒 <span lang="zh-only">匿名填写</span><span lang="en-only">Anonymous</span></span>
+    <span>⏱ <span lang="zh-only">约 3 分钟</span><span lang="en-only">~3 min</span></span>
+    <span>📊 <span lang="zh-only">仅用于学术研究</span><span lang="en-only">Academic use only</span></span>
+  </div>
+</header>
+
+<div class="container">
+
+  <!-- ================= 说明卡 ================= -->
+  <div class="card intro-card">
+    <p>
+      <span lang="zh-only">本问卷聚焦三个核心问题：<b>哪些同学</b>在使用 AI 工具（如 ChatGPT、DeepSeek、Claude、Gemini、文心一言等）、<b>在什么样的学习情境下</b>使用、以及<b>出于什么目的</b>使用。您的回答将被匿名汇总，仅用于学术研究，不会关联到您的个人身份。感谢您的参与！</span>
+      <span lang="en-only">This survey focuses on three core questions: <b>which students</b> use AI tools (e.g. ChatGPT, DeepSeek, Claude, Gemini), <b>in which study situations</b> they use them, and <b>for what purposes</b>. Your responses are anonymous and will be aggregated for academic research only. Thank you for participating!</span>
+    </p>
+  </div>
+
+  <!--
+    ============================================================
+    ★★★ 表单回收配置 ★★★
+    注册 Formspree（https://formspree.io）后：
+    1. 创建一个新 Form，复制形如 https://formspree.io/f/xxxxxxx 的地址
+    2. 把下面 form 标签的 action 替换成你的地址即可开始接收答卷
+    详细步骤见仓库 README.md
+    ============================================================
+  -->
+  <form id="survey-form" class="card" action="https://formspree.io/f/YOUR_FORM_ID" method="POST">
+
+    <div class="alert alert-error" id="form-alert" role="alert"></div>
+
+    <!-- ============ 第一部分：你是谁 ============ -->
+    <fieldset>
+      <legend class="section-title"><span class="num">1</span><span lang="zh-only">你是谁</span><span lang="en-only">About You</span></legend>
+
+      <div class="question">
+        <div class="q-title"><span lang="zh-only">您目前的年级</span><span lang="en-only">Your year of study</span><span class="req">*</span></div>
+        <div class="options cols-2">
+          <label class="option"><input type="radio" name="year" value="Year 1" required><span lang="zh-only">大一</span><span lang="en-only">Year 1</span></label>
+          <label class="option"><input type="radio" name="year" value="Year 2"><span lang="zh-only">大二</span><span lang="en-only">Year 2</span></label>
+          <label class="option"><input type="radio" name="year" value="Year 3"><span lang="zh-only">大三</span><span lang="en-only">Year 3</span></label>
+          <label class="option"><input type="radio" name="year" value="Year 4"><span lang="zh-only">大四</span><span lang="en-only">Year 4</span></label>
+          <label class="option"><input type="radio" name="year" value="Postgraduate"><span lang="zh-only">硕士 / 研究生</span><span lang="en-only">Postgraduate</span></label>
+          <label class="option"><input type="radio" name="year" value="Other"><span lang="zh-only">其他</span><span lang="en-only">Other</span></label>
+        </div>
+      </div>
+
+      <div class="question">
+        <div class="q-title"><span lang="zh-only">您所在的院系 / 学科大类</span><span lang="en-only">Your school / subject area</span><span class="req">*</span></div>
+        <div class="options cols-2">
+          <label class="option"><input type="radio" name="school" value="Science & Engineering" required><span lang="zh-only">理工类（计算机、数学、物理等）</span><span lang="en-only">Science &amp; Engineering</span></label>
+          <label class="option"><input type="radio" name="school" value="Business"><span lang="zh-only">商科 / 经济</span><span lang="en-only">Business / Economics</span></label>
+          <label class="option"><input type="radio" name="school" value="Built Environment"><span lang="zh-only">建筑 / 城市规划 / 土木</span><span lang="en-only">Built Environment / Civil</span></label>
+          <label class="option"><input type="radio" name="school" value="Humanities & Social Sciences"><span lang="zh-only">人文社科 / 传媒 / 语言</span><span lang="en-only">Humanities &amp; Social Sciences</span></label>
+          <label class="option"><input type="radio" name="school" value="Design"><span lang="zh-only">设计 / 影视艺术</span><span lang="en-only">Design / Arts</span></label>
+          <label class="option"><input type="radio" name="school" value="Other"><span lang="zh-only">其他</span><span lang="en-only">Other</span></label>
+        </div>
+      </div>
+
+      <div class="question">
+        <div class="q-title"><span lang="zh-only">您对自己目前学业表现的自评</span><span lang="en-only">How would you rate your current academic performance?</span><span class="req">*</span></div>
+        <div class="options cols-2">
+          <label class="option"><input type="radio" name="standing" value="Top 10%" required><span lang="zh-only">位列前 10%</span><span lang="en-only">Top 10%</span></label>
+          <label class="option"><input type="radio" name="standing" value="Above average"><span lang="zh-only">中上水平</span><span lang="en-only">Above average</span></label>
+          <label class="option"><input type="radio" name="standing" value="Average"><span lang="zh-only">中等水平</span><span lang="en-only">Average</span></label>
+          <label class="option"><input type="radio" name="standing" value="Below average"><span lang="zh-only">中下或靠后</span><span lang="en-only">Below average</span></label>
+        </div>
+      </div>
+
+      <div class="question">
+        <div class="q-title"><span lang="zh-only">您对西浦全英文授课（EMI）环境的适应程度</span><span lang="en-only">How comfortable are you with XJTLU's English-medium instruction (EMI)?</span><span class="req">*</span></div>
+        <div class="options cols-2">
+          <label class="option"><input type="radio" name="english" value="Very comfortable" required><span lang="zh-only">非常适应</span><span lang="en-only">Very comfortable</span></label>
+          <label class="option"><input type="radio" name="english" value="Mostly comfortable"><span lang="zh-only">基本适应</span><span lang="en-only">Mostly comfortable</span></label>
+          <label class="option"><input type="radio" name="english" value="Somewhat struggling"><span lang="zh-only">有些吃力</span><span lang="en-only">Somewhat struggling</span></label>
+          <label class="option"><input type="radio" name="english" value="Struggling a lot"><span lang="zh-only">很吃力</span><span lang="en-only">Struggling a lot</span></label>
+        </div>
+      </div>
+    </fieldset>
+
+    <!-- ============ 第二部分：AI 使用概况 ============ -->
+    <fieldset style="margin-top:34px">
+      <legend class="section-title"><span class="num">2</span><span lang="zh-only">AI 使用概况</span><span lang="en-only">Overall AI Usage</span></legend>
+
+      <div class="question">
+        <div class="q-title"><span lang="zh-only">您使用过哪些 AI 工具？（多选）</span><span lang="en-only">Which AI tools have you used? (Select all that apply)</span><span class="req">*</span></div>
+        <div class="options cols-2">
+          <label class="option"><input type="checkbox" name="tools" value="ChatGPT"><span>ChatGPT</span></label>
+          <label class="option"><input type="checkbox" name="tools" value="DeepSeek"><span>DeepSeek</span></label>
+          <label class="option"><input type="checkbox" name="tools" value="Claude"><span>Claude</span></label>
+          <label class="option"><input type="checkbox" name="tools" value="Gemini"><span>Google Gemini</span></label>
+          <label class="option"><input type="checkbox" name="tools" value="Copilot"><span>GitHub Copilot</span></label>
+          <label class="option"><input type="checkbox" name="tools" value="ERNIE / Kimi / Qwen"><span lang="zh-only">文心一言 / Kimi / 通义千问</span><span lang="en-only">ERNIE Bot / Kimi / Qwen</span></label>
+          <label class="option"><input type="checkbox" name="tools" value="Perplexity / search AI"><span lang="zh-only">AI 搜索（Perplexity 等）</span><span lang="en-only">AI search (Perplexity etc.)</span></label>
+          <label class="option"><input type="checkbox" name="tools" value="None"><span lang="zh-only">都没用过</span><span lang="en-only">None of the above</span></label>
+        </div>
+      </div>
+
+      <div class="question">
+        <div class="q-title"><span lang="zh-only">您的使用频率</span><span lang="en-only">How often do you use AI tools?</span><span class="req">*</span></div>
+        <div class="options cols-2">
+          <label class="option"><input type="radio" name="frequency" value="Daily" required><span lang="zh-only">每天多次</span><span lang="en-only">Multiple times a day</span></label>
+          <label class="option"><input type="radio" name="frequency" value="Most days"><span lang="zh-only">几乎每天</span><span lang="en-only">Most days</span></label>
+          <label class="option"><input type="radio" name="frequency" value="Weekly"><span lang="zh-only">每周几次</span><span lang="en-only">A few times a week</span></label>
+          <label class="option"><input type="radio" name="frequency" value="Occasionally"><span lang="zh-only">偶尔使用</span><span lang="en-only">Occasionally</span></label>
+          <label class="option"><input type="radio" name="frequency" value="Rarely"><span lang="zh-only">基本不用</span><span lang="en-only">Rarely / Never</span></label>
+        </div>
+      </div>
+
+      <div class="question">
+        <div class="q-title"><span lang="zh-only">您开始较频繁地使用 AI 工具，大约是</span><span lang="en-only">When did you start using AI tools regularly?</span></div>
+        <div class="options cols-2">
+          <label class="option"><input type="radio" name="start" value="Within 6 months"><span lang="zh-only">最近半年内</span><span lang="en-only">Within the last 6 months</span></label>
+          <label class="option"><input type="radio" name="start" value="~1 year ago"><span lang="zh-only">大约一年前</span><span lang="en-only">About a year ago</span></label>
+          <label class="option"><input type="radio" name="start" value="1-2 years ago"><span lang="zh-only">1–2 年前</span><span lang="en-only">1–2 years ago</span></label>
+          <label class="option"><input type="radio" name="start" value="Over 2 years"><span lang="zh-only">两年以上</span><span lang="en-only">Over 2 years ago</span></label>
+          <label class="option"><input type="radio" name="start" value="Barely use"><span lang="zh-only">我基本不使用 AI</span><span lang="en-only">I barely use AI</span></label>
+        </div>
+      </div>
+    </fieldset>
+
+    <!-- ============ 第三部分：在什么情境下使用 ============ -->
+    <fieldset style="margin-top:34px">
+      <legend class="section-title"><span class="num">3</span><span lang="zh-only">在什么情境下使用</span><span lang="en-only">In What Situations</span></legend>
+
+      <div class="question">
+        <div class="q-title"><span lang="zh-only">以下哪些情境下您会使用 AI？（多选）</span><span lang="en-only">In which situations do you use AI? (Select all that apply)</span><span class="req">*</span></div>
+        <div class="options cols-2">
+          <label class="option"><input type="checkbox" name="situations" value="Deadlines"><span lang="zh-only">作业临近截止、时间压力大</span><span lang="en-only">Tight deadlines, time pressure</span></label>
+          <label class="option"><input type="checkbox" name="situations" value="Didn't follow lecture"><span lang="zh-only">上课没听懂，课后补救</span><span lang="en-only">Didn't follow a lecture</span></label>
+          <label class="option"><input type="checkbox" name="situations" value="Exam revision"><span lang="zh-only">考试周集中复习</span><span lang="en-only">Revision during exam weeks</span></label>
+          <label class="option"><input type="checkbox" name="situations" value="Group work"><span lang="zh-only">小组作业与项目</span><span lang="en-only">Group assignments &amp; projects</span></label>
+          <label class="option"><input type="checkbox" name="situations" value="English writing"><span lang="zh-only">英文写作与表达（EAP、论文、邮件）</span><span lang="en-only">English writing (EAP, essays, emails)</span></label>
+          <label class="option"><input type="checkbox" name="situations" value="Literature"><span lang="zh-only">文献阅读与研究任务</span><span lang="en-only">Literature reading &amp; research</span></label>
+          <label class="option"><input type="checkbox" name="situations" value="Job hunting"><span lang="zh-only">求职（CV、笔试、面试）</span><span lang="en-only">Job hunting (CV, tests, interviews)</span></label>
+          <label class="option"><input type="checkbox" name="situations" value="Daily life"><span lang="zh-only">课余生活（翻译、行程、情感陪伴等）</span><span lang="en-only">Daily life (translation, planning, etc.)</span></label>
+        </div>
+      </div>
+
+      <div class="question">
+        <div class="q-title"><span lang="zh-only">遇到学习难题时，您通常的做法是</span><span lang="en-only">When you hit a difficult problem, you usually...</span><span class="req">*</span></div>
+        <div class="options">
+          <label class="option"><input type="radio" name="trigger" value="Ask AI first" required><span lang="zh-only">第一时间问 AI，再自己消化</span><span lang="en-only">Ask AI first, then digest the answer</span></label>
+          <label class="option"><input type="radio" name="trigger" value="Try myself first"><span lang="zh-only">先自己钻研，卡住了才问 AI</span><span lang="en-only">Try myself first, ask AI when stuck</span></label>
+          <label class="option"><input type="radio" name="trigger" value="Only under time pressure"><span lang="zh-only">平时自己解决，赶时间才用 AI</span><span lang="en-only">Only use AI under time pressure</span></label>
+          <label class="option"><input type="radio" name="trigger" value="Start with AI outline"><span lang="zh-only">拿到任务先让 AI 给思路或框架</span><span lang="en-only">Start with an AI outline / framework</span></label>
+          <label class="option"><input type="radio" name="trigger" value="Ask people instead"><span lang="zh-only">更倾向于问老师 / 同学而非 AI</span><span lang="en-only">Prefer asking teachers / classmates</span></label>
+        </div>
+      </div>
+
+      <div class="question">
+        <div class="q-title"><span lang="zh-only">完成作业时，AI 通常扮演的角色是</span><span lang="en-only">In your coursework, AI usually acts as...</span><span class="req">*</span></div>
+        <div class="options">
+          <label class="option"><input type="radio" name="ai_role" value="Main producer" required><span lang="zh-only">主力产出——生成初稿或答案，我再修改</span><span lang="en-only">Main producer — drafts answers, I edit</span></label>
+          <label class="option"><input type="radio" name="ai_role" value="Consultant"><span lang="zh-only">顾问——提供思路和讲解，我自己写</span><span lang="en-only">Consultant — explains ideas, I write</span></label>
+          <label class="option"><input type="radio" name="ai_role" value="Polisher"><span lang="zh-only">润色者——我自己写完，让 AI 检查润色</span><span lang="en-only">Polisher — checks and polishes my work</span></label>
+          <label class="option"><input type="radio" name="ai_role" value="Narrow tool"><span lang="zh-only">局部工具——只在特定环节用（如代码调试）</span><span lang="en-only">Narrow tool — only specific parts</span></label>
+          <label class="option"><input type="radio" name="ai_role" value="Not involved"><span lang="zh-only">基本不参与</span><span lang="en-only">Not involved</span></label>
+        </div>
+      </div>
+    </fieldset>
+
+    <!-- ============ 第四部分：出于什么目的 ============ -->
+    <fieldset style="margin-top:34px">
+      <legend class="section-title"><span class="num">4</span><span lang="zh-only">出于什么目的</span><span lang="en-only">For What Purposes</span></legend>
+
+      <div class="question">
+        <div class="q-title"><span lang="zh-only">您使用 AI 的目的有哪些？（多选）</span><span lang="en-only">What are your purposes for using AI? (Select all that apply)</span><span class="req">*</span></div>
+        <div class="options cols-2">
+          <label class="option"><input type="checkbox" name="purposes" value="Efficiency"><span lang="zh-only">提高效率、节省时间</span><span lang="en-only">Efficiency and time-saving</span></label>
+          <label class="option"><input type="checkbox" name="purposes" value="Better grades"><span lang="zh-only">提升作业与考试成绩</span><span lang="en-only">Better coursework and exam results</span></label>
+          <label class="option"><input type="checkbox" name="purposes" value="Getting through modules"><span lang="zh-only">应对不感兴趣或觉得收获不大的课</span><span lang="en-only">Getting through less-valued modules</span></label>
+          <label class="option"><input type="checkbox" name="purposes" value="Language support"><span lang="zh-only">降低全英文学习的语言门槛</span><span lang="en-only">Overcoming the English barrier</span></label>
+          <label class="option"><input type="checkbox" name="purposes" value="Exploration"><span lang="zh-only">探索课程之外感兴趣的知识</span><span lang="en-only">Exploring topics beyond class</span></label>
+          <label class="option"><input type="checkbox" name="purposes" value="Avoiding asking people"><span lang="zh-only">减少向他人求助的社交成本</span><span lang="en-only">Avoiding the social cost of asking</span></label>
+          <label class="option"><input type="checkbox" name="purposes" value="Professional look"><span lang="zh-only">让作品看起来更专业（排版、代码质量等）</span><span lang="en-only">Making work look more professional</span></label>
+          <label class="option"><input type="checkbox" name="purposes" value="Fun & curiosity"><span lang="zh-only">好奇心与娱乐</span><span lang="en-only">Curiosity and fun</span></label>
+        </div>
+      </div>
+
+      <div class="question">
+        <div class="q-title"><span lang="zh-only">其中，您<b>最主要</b>的一个目的是</span><span lang="en-only">Which one is your <b>primary</b> purpose?</span><span class="req">*</span></div>
+        <div class="options cols-2">
+          <label class="option"><input type="radio" name="primary" value="Efficiency & time" required><span lang="zh-only">省时间、提效率</span><span lang="en-only">Saving time, efficiency</span></label>
+          <label class="option"><input type="radio" name="primary" value="Grades"><span lang="zh-only">提升成绩</span><span lang="en-only">Better grades</span></label>
+          <label class="option"><input type="radio" name="primary" value="Getting tasks done"><span lang="zh-only">把任务应付过去</span><span lang="en-only">Getting tasks done</span></label>
+          <label class="option"><input type="radio" name="primary" value="Language support"><span lang="zh-only">语言支持</span><span lang="en-only">Language support</span></label>
+          <label class="option"><input type="radio" name="primary" value="Exploring interests"><span lang="zh-only">探索兴趣</span><span lang="en-only">Exploring interests</span></label>
+          <label class="option"><input type="radio" name="primary" value="Other"><span lang="zh-only">其他</span><span lang="en-only">Other</span></label>
+        </div>
+      </div>
+
+      <div class="question">
+        <div class="q-title"><span lang="zh-only">假设明天所有 AI 工具都无法使用，您预计</span><span lang="en-only">If all AI tools stopped working tomorrow, you would expect...</span><span class="req">*</span></div>
+        <div class="options">
+          <label class="option"><input type="radio" name="loss" value="Efficiency drops" required><span lang="zh-only">学习效率大幅下降</span><span lang="en-only">My efficiency would drop sharply</span></label>
+          <label class="option"><input type="radio" name="loss" value="Grades slip"><span lang="zh-only">作业和成绩可能下滑</span><span lang="en-only">My grades might slip</span></label>
+          <label class="option"><input type="radio" name="loss" value="English gets harder"><span lang="zh-only">英文学习任务会更吃力</span><span lang="en-only">English-medium tasks would get harder</span></label>
+          <label class="option"><input type="radio" name="loss" value="Would adapt"><span lang="zh-only">影响不大，很快能适应</span><span lang="en-only">Little impact, I'd adapt quickly</span></label>
+          <label class="option"><input type="radio" name="loss" value="No impact"><span lang="zh-only">几乎没有影响</span><span lang="en-only">Almost no impact</span></label>
+        </div>
+      </div>
+    </fieldset>
+
+    <!-- ============ 第五部分：总体影响与建议 ============ -->
+    <fieldset style="margin-top:34px">
+      <legend class="section-title"><span class="num">5</span><span lang="zh-only">总体影响与建议</span><span lang="en-only">Overall Impact &amp; Feedback</span></legend>
+
+      <div class="question">
+        <div class="q-title"><span lang="zh-only">总体而言，AI 工具对您的学习效果</span><span lang="en-only">Overall, AI tools have affected your learning...</span><span class="req">*</span></div>
+        <div class="options cols-2">
+          <label class="option"><input type="radio" name="impact" value="Very positive" required><span lang="zh-only">非常有帮助</span><span lang="en-only">Very positively</span></label>
+          <label class="option"><input type="radio" name="impact" value="Somewhat positive"><span lang="zh-only">比较有帮助</span><span lang="en-only">Somewhat positively</span></label>
+          <label class="option"><input type="radio" name="impact" value="Neutral"><span lang="zh-only">没什么影响</span><span lang="en-only">Neutral</span></label>
+          <label class="option"><input type="radio" name="impact" value="Somewhat negative"><span lang="zh-only">有一定负面影响</span><span lang="en-only">Somewhat negatively</span></label>
+          <label class="option"><input type="radio" name="impact" value="Very negative"><span lang="zh-only">负面影响很大</span><span lang="en-only">Very negatively</span></label>
+        </div>
+      </div>
+
+      <div class="question">
+        <div class="q-title"><span lang="zh-only">开放题：结合您自己的使用经历，您希望学校在引导学生使用 AI 方面做些什么？（选填）</span><span lang="en-only">Open question: Based on your own experience, what should the university do about students' AI use? (Optional)</span></div>
+        <textarea name="suggestions" rows="4" maxlength="1000" placeholder="例如：希望学校提供的培训、政策或支持 / e.g. training, policies or support you'd like to see"></textarea>
+      </div>
+    </fieldset>
+
+    <!-- Formspree 反垃圾与主题配置 -->
+    <input type="hidden" name="_subject" value="新问卷提交 | New XJTLU AI Survey Response">
+    <input type="text" name="_gotcha" style="display:none" tabindex="-1" autocomplete="off">
+
+    <div class="submit-area" style="margin-top:28px">
+      <button type="submit" class="btn-submit" id="btn-submit">
+        <span lang="zh-only">提交问卷</span><span lang="en-only">Submit</span>
+      </button>
+      <p style="font-size:12.5px;color:var(--text-muted);margin-top:12px">
+        <span lang="zh-only">带 * 为必填项 · 提交即表示同意匿名用于研究</span>
+        <span lang="en-only">* = required · By submitting you agree to anonymous academic use</span>
+      </p>
+    </div>
+  </form>
+
+  <!-- ============ 提交成功页 ============ -->
+  <div class="card thanks" id="thanks">
+    <div class="icon">🎉</div>
+    <h2><span lang="zh-only">提交成功！</span><span lang="en-only">Submitted!</span></h2>
+    <p style="color:var(--text-muted)">
+      <span lang="zh-only">非常感谢您的参与，您的反馈对这项研究非常重要。可以关闭此页面了。</span>
+      <span lang="en-only">Thank you so much — your feedback matters. You can close this page now.</span>
+    </p>
+  </div>
+
+  <div class="footer">
+    <p><span lang="zh-only">本项目托管于 GitHub Pages · 结果仅用于学术目的</span><span lang="en-only">Hosted on GitHub Pages · For academic purposes only</span></p>
+  </div>
+</div>
+
+<script>
+  // ===== 语言切换 =====
+  function setLang(lang) {
+    document.documentElement.lang = lang === 'zh' ? 'zh-CN' : 'en';
+    document.getElementById('btn-zh').classList.toggle('active', lang === 'zh');
+    document.getElementById('btn-en').classList.toggle('active', lang === 'en');
+    document.title = lang === 'zh'
+      ? '西交利物浦大学 AI 使用情况调查'
+      : 'XJTLU AI Usage Survey';
+  }
+
+  // ===== 提交校验（必填项 + 防止未配置表单服务时丢数据）=====
+  // 单选必填组
+  const REQUIRED_GROUPS = ['year', 'school', 'standing', 'english', 'frequency', 'trigger', 'ai_role', 'primary', 'loss', 'impact'];
+  // 多选必填组（至少勾选一项）
+  const CHECKBOX_GROUPS = ['tools', 'situations', 'purposes'];
+
+  function showError(msg) {
+    const alert = document.getElementById('form-alert');
+    alert.textContent = '⚠️ ' + msg;
+    alert.classList.add('show');
+    alert.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }
+
+  document.getElementById('survey-form').addEventListener('submit', function (e) {
+    const alert = document.getElementById('form-alert');
+    alert.classList.remove('show');
+
+    // 1) 检查表单服务是否已配置
+    const action = this.getAttribute('action');
+    if (action.indexOf('YOUR_FORM_ID') !== -1) {
+      e.preventDefault();
+      showError(document.documentElement.lang.indexOf('zh') === 0
+        ? '网站管理员尚未配置答卷回收服务（Formspree），暂时无法提交。请联系页面维护者。'
+        : 'The form backend (Formspree) has not been configured yet. Please contact the site maintainer.');
+      return;
+    }
+
+    // 2) 必填项校验（单选组 + 多选组各至少一项）
+    const isZh = document.documentElement.lang.indexOf('zh') === 0;
+    for (const name of REQUIRED_GROUPS.concat(CHECKBOX_GROUPS)) {
+      const answered = this.querySelector('input[name="' + name + '"]:checked');
+      if (!answered) {
+        e.preventDefault();
+        showError(isZh
+          ? '请完成所有带 * 的必填题目（多选题至少选择一项）。'
+          : 'Please complete all required questions marked with * (select at least one option in each).');
+        return;
+      }
+    }
+
+    // 3) 多选题合并为单个字段（便于表单服务展示）
+    document.querySelectorAll('input[type="checkbox"]:checked').forEach(cb => {
+      cb.value = cb.closest('.option').textContent.trim() + ' [' + cb.value + ']';
+    });
+
+    // 简单防抖，避免重复提交
+    const btn = document.getElementById('btn-submit');
+    btn.disabled = true;
+    setTimeout(() => { btn.disabled = false; }, 8000);
+  });
+
+  // Formspree AJAX 提交（不跳转页面）
+  document.getElementById('survey-form').addEventListener('submit', function (e) {
+    if (this.getAttribute('action').indexOf('YOUR_FORM_ID') !== -1) return; // 未配置则跳过
+    // 上面的同步校验通过后，改用 fetch 提交以停留在本页
+    e.preventDefault();
+    const form = this;
+    const data = new FormData(form);
+    fetch(form.action, {
+      method: 'POST',
+      body: data,
+      headers: { 'Accept': 'application/json' }
+    }).then(resp => {
+      if (resp.ok) {
+        form.style.display = 'none';
+        document.getElementById('thanks').style.display = 'block';
+        document.getElementById('thanks').scrollIntoView({ behavior: 'smooth' });
+      } else {
+        throw new Error('HTTP ' + resp.status);
+      }
+    }).catch(() => {
+      // AJAX 失败时退回原生提交（跳转到 Formspree 感谢页）
+      form.submit();
+    });
+  });
+</script>
+</body>
+</html>
